@@ -1,0 +1,25 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<suite name="Two Three and Me Tests" verbose="1"  data-provider-thread-count="1" parallel="tests" thread-count="1" >
+    
+    
+    <groups>
+        <run>
+            <include name="startWebDriver" />
+            <include name="flows" />
+        </run>
+    </groups>
+    
+    <parameter name="browser" value = "FireFox" />
+  
+    <test name="23 and Me Tests">
+        
+        
+        <classes>
+     <!--  <class name="com.acme.ebayent.AppTest" /> -->
+       		<class name="com.twothreeandme.OrderTest" />
+        </classes>
+    </test>
+
+    
+</suite>
