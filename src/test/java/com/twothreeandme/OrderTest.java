@@ -84,6 +84,10 @@ public class OrderTest {
     
     private List<Integer> values;
     
+    private static double cartPrice=0;
+    private static double youSaved=0;
+    private static double Total=0;
+    
     private static final int MINIMUM = 0;
     private static final int MAXIMUM = 10;
     
@@ -104,8 +108,8 @@ String Path = "./target/ExtentReport.html";
 System.out.println(Path);
 extent = new ExtentReports(Path, false);
 extent.config()
-           .documentTitle("Automation Report")
-           .reportName("Regression");
+           .documentTitle("23 and Me Automation Report")
+           .reportName("Coding Test");
 
 return extent;
  }
@@ -125,17 +129,6 @@ return extent;
     @BeforeTest(groups={"startWebDriver"})
     public void initializeExtentReport() throws Exception{
     	extent = OrderTest.Instance();  		
-    }
-
-    
-    @BeforeTest(groups={"startWebDriver"})
-    public void initializeOR() throws Exception{
-    	
-    	src=new File("./src/test/resources/OR.properties");
-    	fis=new FileInputStream(src);
-    	pro=new Properties();
-    	pro.load(fis);
-    	System.out.println("OR Loaded");    	
     }
     
     
@@ -176,7 +169,7 @@ return extent;
  
             System.setProperty("webdriver.chrome.driver","./src/test/resources/chromedriver.exe");
  
-            //create chrome instance
+            //create Chrome instance
  
             driver = new ChromeDriver();
  
@@ -194,9 +187,6 @@ return extent;
  
         }
  
-       // String pathToBrowser= "/Applications/FireFox";
-       // BrowserProcess = Runtime.getRuntime().exec(pathToBrowser);
-        //System.out.println(BrowserProcess);
         
         boolean BrowserStarted = false;
         
@@ -236,10 +226,11 @@ return extent;
     public void addItemToCart (String name) throws Exception {
         
        // int kitCount=5;
+    	double price=0,totalPrice=0;
         System.out.println("starting addKitToCart");
-        test = extent.startTest("addKit " + name, "Verify Cusomer is able to add Kits to cart");
+        test = extent.startTest("Add Kit " + name, "Verify Cusomer is able to add Kits to cart");
 
-        takeScreenShot();
+        
         
        
         List<WebElement> headerText = driver.findElements(By.tagName("h2"));
@@ -255,12 +246,19 @@ return extent;
     	        Thread.sleep(5000);
     	        List<WebElement> inputFields = driver.findElements(By.tagName("input").className("js-kit-name"));
                 i = inputFields.iterator();
-           	System.out.println("Input Size : " + inputFields.size());
+           	System.out.println("Cart Items : " + inputFields.size());
            	if(inputFields.size()>0)
            	{
+           		//test = extent.startTest("Add Kit Member 0", "Verify Cusomer is able to add Kits to cart");
               inputFields.get(inputFields.size()-1).sendKeys("Member 0");
+              //extent.endTest(test); 
+              List<WebElement> priceValue  = driver.findElements(By.tagName("span").className("price"));
+              System.out.println("Price test : " + priceValue.get(0).getText().substring(1,priceValue.get(0).getText().length()));
+              cartPrice = Double.parseDouble(priceValue.get(0).getText().substring(1,priceValue.get(0).getText().length()));
+             
               Thread.sleep(2000);
            	}
+           	System.out.println("Total sum is : " + price);
     	        break;
     		}
     	}
@@ -291,27 +289,49 @@ return extent;
             	
             	List<WebElement> inputFields = driver.findElements(By.tagName("input").className("js-kit-name"));
                 i = inputFields.iterator();
-           	System.out.println("Input Size : " + inputFields.size());
+           	System.out.println("Cart Size : " + inputFields.size());
            	if(inputFields.size()>0)
            	{
               inputFields.get(inputFields.size()-1).sendKeys(name);
               Thread.sleep(2000);
            	}	
-            			
+            	
+            List<WebElement> discountValue  = driver.findElements(By.tagName("div").className("discount"));
+            i = discountValue.iterator();
+            System.out.println("Discount Size : " + discountValue.size());
+            while(i.hasNext())
+            {
+          	  WebElement discount = i.next();
+          	  if(discount.getText().contains("off"))
+          	  {
+          		  price = price + Double.parseDouble(discount.getText().substring(discount.getText().length()-6,discount.getText().length()));
+          	  }
+            }
             
+            cartPrice = price + 199;
+            youSaved = Total-cartPrice;
+     
+            List<WebElement> cartQty  = driver.findElements(By.tagName("span").className("kit-quantity"));
+            System.out.println("Cart Qty: " + cartQty.get(0).getText());
+            if(Integer.valueOf(cartQty.get(0).getText())!=inputFields.size())
+            {
+            	 test.log(LogStatus.FAIL, "Cart Qty doesnt Match" );	
+            	 test.log(LogStatus.INFO, test.addScreenCapture(OrderTest.CaptureScreen(driver, "./cartQtyFail")));
+            	 takeScreenShot("./target/cartQtyFail");     	 
+            }
+        System.out.println("Total price after calculation : " + cartPrice);
+        System.out.println("You Saved : " + youSaved);
         
-        takeScreenShot();
-
-        
-
-     //  waitForWebElement("name").sendKeys("Customer x");
-        test.log(LogStatus.PASS, "Clicked Add Kit" );
-        test.log(LogStatus.INFO, test.addScreenCapture(OrderTest.CaptureScreen(driver, "./Addkit")));
+        test.log(LogStatus.INFO, "Sum of Total items in Cart (includes 10% discount for additional kits :" + cartPrice );
+        test.log(LogStatus.INFO, "You Saved : 10% discount for additional kits :" + youSaved );
+    
+        test.log(LogStatus.PASS, "Kits Added" );
+        test.log(LogStatus.INFO, test.addScreenCapture(OrderTest.CaptureScreen(driver, "./Addkit" + name)));
         
         Thread.sleep(500);
         
         
-        takeScreenShot();
+        takeScreenShot("./target/Addkit" +name);
         
         extent.endTest(test);
      
@@ -321,8 +341,6 @@ return extent;
     {
     	 System.out.println("starting ValidateImages");
          test = extent.startTest("verifyImages", "Verify the Page Images in 23andMe page");
-         
-         takeScreenShot();
          
          List<WebElement> images = driver.findElements(By.tagName("img"));
          java.util.Iterator<WebElement> i = images.iterator();
@@ -346,7 +364,11 @@ return extent;
               e.printStackTrace();
         	 }
          }
-         takeScreenShot();
+         test.log(LogStatus.PASS, "Image Links verified" );
+         test.log(LogStatus.INFO, test.addScreenCapture(OrderTest.CaptureScreen(driver, "./ImageVerify")));
+         
+         
+         takeScreenShot("./target/ImageVerify");
          
          extent.endTest(test);
          
@@ -359,14 +381,13 @@ return extent;
     	 boolean flag=true;
          test = extent.startTest("verifyLinks", "Verify the Page links in 23andMe page");
          
-         takeScreenShot();
          
          List<WebElement> links = driver.findElements(By.tagName("a"));
          java.util.Iterator<WebElement> i = links.iterator();
          while(i.hasNext())
          {
         	 WebElement link = i.next(); 
-        	 if(link!=null && link.getAttribute("href")!=null)
+        	 if(link!=null && link.getAttribute("href")!=null && !link.getText().equals("") && !link.getText().isEmpty())
         	 {
         		 try
         		 {
@@ -379,28 +400,18 @@ return extent;
         			 }
         		  }catch(Exception e)
         		 {
-                	 test.log(LogStatus.FAIL, "Link : " + link.getText() + " Dest URL : " + link.getAttribute("src"));
                 	 e.printStackTrace();
         		 }
         	 }
-        	 else
-        	 {
-        		 test.log(LogStatus.FAIL, "Broken Link : " + link.getText());	
-        		 flag=false;
-        	 }
+        	
         } 
          
-         if(flag==false)
-         {
-        	 test.log(LogStatus.FAIL, "Page contains broken links");	 
-         }
-         else
-         {
-        	 test.log(LogStatus.PASS, "Page Links validated");	 
-
-         }
          
-         takeScreenShot();
+         test.log(LogStatus.PASS, "Page Links verified" );
+         test.log(LogStatus.INFO, test.addScreenCapture(OrderTest.CaptureScreen(driver, "./PageLinks")));
+         
+         
+         takeScreenShot("./target/PageLinks");
          
          extent.endTest(test);
          
@@ -450,14 +461,53 @@ return extent;
         }
     }
     
+    public void addressFieldValidation()
+    {
+    	System.out.println("Starting Field Validation");
+    	 test = extent.startTest("Address Page - Field Validation", "Verify whether field validation messages are displayed in 23andMe Address page");
+    	  
+    	 clickContinue();
+    	try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	List<WebElement> errorFields = driver.findElements(By.tagName("span").className("error"));
+        System.out.println(errorFields.size());
+       
+        if(errorFields.size()>14 ||errorFields.size()<0 )
+        {
+        	test.log(LogStatus.FAIL, "Fields missing validation message");
+        }
+       
+        
+        try {
+			takeScreenShot("./target/FieldValidation");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        test.log(LogStatus.INFO, test.addScreenCapture(OrderTest.CaptureScreen(driver, "./FieldValidation")));
+        test.log(LogStatus.PASS, "Address field inline messages validated");
+        try {
+			takeScreenShot("./target/FieldValidation");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        extent.endTest(test);
+    }
+    
     public void fillAddress(String firstname,String lastname,String AddressLine1, String AptAddressLine2,String city,String state,String zip,String country,String email, String phone) throws Exception
     {
     	Thread.sleep(2000);
-    	 System.out.println("starting fillAddress");
-         test = extent.startTest("fillAddress", "Verify the customer is able to fill address in 23andMe page");
+    	 System.out.println("starting type Address");
+         test = extent.startTest("Auto type Address", "Verify the customer is able to fill address in 23andMe page");
          
          List<WebElement> textFields = driver.findElements(By.tagName("input"));
-         System.out.println(textFields.size());
+        // System.out.println(textFields.size());
          //java.util.Iterator<WebElement> i = textFields.iterator();
          driver.findElement(By.id("id_first_name")).sendKeys(firstname);
          driver.findElement(By.id("id_last_name")).sendKeys(firstname);
@@ -474,8 +524,8 @@ return extent;
         // select.deselectAll();
          select.selectByIndex(0);
          test.log(LogStatus.PASS, "Address Information Filled");
-         test.log(LogStatus.INFO, test.addScreenCapture(OrderTest.CaptureScreen(driver, "./CustomerInfo")));
-         takeScreenShot();
+         test.log(LogStatus.INFO, test.addScreenCapture(OrderTest.CaptureScreen(driver, "./TypedInfo")));
+         takeScreenShot("./target/TypedInfo");
          extent.endTest(test);
     }
     
@@ -511,13 +561,16 @@ return extent;
      		 			break;
      		 		}
      		 	}
-     		 	takeScreenShot();
+     		   test.log(LogStatus.INFO, test.addScreenCapture(OrderTest.CaptureScreen(driver, "./AddressVerify")));
+     	         takeScreenShot("./target/AddressVerify");
+     		 	
      		}
      		else if(text.isDisplayed() && text.getText().contains("unverified address"))
      		{
-     			
+     		   test.log(LogStatus.INFO, test.addScreenCapture(OrderTest.CaptureScreen(driver, "./AddressVerify")));
+     	         takeScreenShot("./target/AddressVerify");
      			clickButton("submit","ship to verified address");
-     		 	takeScreenShot();
+     		 
      		 	if(driver.getCurrentUrl().contains("payment"))
      		 			{
      		 		System.out.println("Reached Payment Page");
@@ -528,7 +581,10 @@ return extent;
      	}
         
          test.log(LogStatus.PASS, "Address Information Verified");	
-         takeScreenShot();
+         
+         test.log(LogStatus.INFO, test.addScreenCapture(OrderTest.CaptureScreen(driver, "./PaymentPage")));
+         takeScreenShot("./target/PaymentPage");
+      
          extent.endTest(test);
     }
     
@@ -536,16 +592,17 @@ return extent;
     @Test(groups={"flows"},priority=1)
    // @Parameters("kitNumber")
     public void firstFlow () throws Exception {
-    	int kitNumber = 2;
-    	//validateLinks();
-    	//validateImages();
+    	int kitNumber = 5;
+    	Total = kitNumber * 199;
+    	validateLinks();
     	for(int i=1;i<kitNumber;i++)
-    	addItemToCart("Member" + i);       
+    	addItemToCart("Member" + i); 
+    	validateImages();
     	clickContinue();
+    	addressFieldValidation();
         fillAddress("John","Doe","4116 Providence Rd","Apt J","Charlotte","North Carolina","28211","United States","gbo@gmail.com","7049871234");
         clickContinue();
         addressVerification();
-        takeScreenShot();
     }
     
    
@@ -583,7 +640,7 @@ return extent;
                 System.out.println(foundValue);
             }
             catch (NoSuchElementException nsee) {
-                //System.out.println("Count not find: " + xpath + " with value " + attributeValue);
+              
                 Thread.sleep(100);
                 long endTime = System.currentTimeMillis();
                 long deltaTime = endTime - startTime;
@@ -638,7 +695,7 @@ return extent;
         //if (true) return;
         
         File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-        FileUtils.copyFile(scrFile,new File("screenShot." + screenShotCount + ".png" ));
+        FileUtils.copyFile(scrFile,new File("./target/screenShot." + screenShotCount + ".png" ));
         screenShotCount++;
     }
     
@@ -646,7 +703,7 @@ return extent;
     void takeScreenShot (String s) throws Exception {
         
         File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-        FileUtils.copyFile(scrFile,new File(s + ".png" ));
+        FileUtils.copyFile(scrFile,new File( s + ".jpg" ));
 
     }
     

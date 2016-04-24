@@ -2,35 +2,31 @@
 <testng-results skipped="0" failed="0" total="1" passed="1">
   <reporter-output>
   </reporter-output>
-  <suite name="com.twothreeandme.OrderTest" duration-ms="130461" started-at="2016-04-23T23:29:28Z" finished-at="2016-04-23T23:31:38Z">
+  <suite name="com.twothreeandme.OrderTest" duration-ms="117668" started-at="2016-04-24T06:31:18Z" finished-at="2016-04-24T06:33:16Z">
     <groups>
       <group name="flows">
         <method signature="OrderTest.firstFlow()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="firstFlow" class="com.twothreeandme.OrderTest"/>
       </group> <!-- flows -->
     </groups>
-    <test name="Command line test" duration-ms="130461" started-at="2016-04-23T23:29:28Z" finished-at="2016-04-23T23:31:38Z">
+    <test name="Command line test" duration-ms="117668" started-at="2016-04-24T06:31:18Z" finished-at="2016-04-24T06:33:16Z">
       <class name="com.twothreeandme.OrderTest">
-        <test-method status="PASS" signature="initializeExtentReport()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="initializeExtentReport" is-config="true" duration-ms="613" started-at="2016-04-23T16:29:28Z" finished-at="2016-04-23T16:29:28Z">
+        <test-method status="PASS" signature="initializeExtentReport()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="initializeExtentReport" is-config="true" duration-ms="591" started-at="2016-04-23T23:31:18Z" finished-at="2016-04-23T23:31:19Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- initializeExtentReport -->
-        <test-method status="PASS" signature="startWebDriver()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="startWebDriver" is-config="true" duration-ms="10798" started-at="2016-04-23T16:29:28Z" finished-at="2016-04-23T16:29:39Z">
+        <test-method status="PASS" signature="startWebDriver()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="startWebDriver" is-config="true" duration-ms="8869" started-at="2016-04-23T23:31:19Z" finished-at="2016-04-23T23:31:28Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- startWebDriver -->
-        <test-method status="PASS" signature="initializeOR()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="initializeOR" is-config="true" duration-ms="0" started-at="2016-04-23T16:29:28Z" finished-at="2016-04-23T16:29:28Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- initializeOR -->
-        <test-method status="PASS" signature="firstFlow()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="firstFlow" duration-ms="118671" started-at="2016-04-23T16:29:39Z" finished-at="2016-04-23T16:31:38Z">
+        <test-method status="PASS" signature="firstFlow()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="firstFlow" duration-ms="107797" started-at="2016-04-23T23:31:28Z" finished-at="2016-04-23T23:33:15Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- firstFlow -->
-        <test-method status="PASS" signature="tearDownExtentReports()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="tearDownExtentReports" is-config="true" duration-ms="218" started-at="2016-04-23T16:31:38Z" finished-at="2016-04-23T16:31:38Z">
+        <test-method status="PASS" signature="tearDownExtentReports()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="tearDownExtentReports" is-config="true" duration-ms="234" started-at="2016-04-23T23:33:15Z" finished-at="2016-04-23T23:33:16Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDownExtentReports -->
-        <test-method status="PASS" signature="tearDownWebDriver()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="tearDownWebDriver" is-config="true" duration-ms="153" started-at="2016-04-23T16:31:38Z" finished-at="2016-04-23T16:31:38Z">
+        <test-method status="PASS" signature="tearDownWebDriver()[pri:0, instance:com.twothreeandme.OrderTest@13a57a3b]" name="tearDownWebDriver" is-config="true" duration-ms="171" started-at="2016-04-23T23:33:16Z" finished-at="2016-04-23T23:33:16Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDownWebDriver -->
